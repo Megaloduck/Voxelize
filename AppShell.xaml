@@ -5,14 +5,16 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:sf="clr-namespace:Syncfusion.Maui.Toolkit.SegmentedControl;assembly=Syncfusion.Maui.Toolkit"
     xmlns:pages="clr-namespace:Voxelize.Pages"
-    Shell.FlyoutBehavior="Flyout"
+    Shell.FlyoutBehavior="Disabled"
+    Shell.NavBarIsVisible="False"
     Title="Voxelize">
 
-    <ShellContent
-        Title="Dashboard"
-        Icon="{StaticResource IconDashboard}"
-        ContentTemplate="{DataTemplate pages:MainPage}"
-        Route="main" />
+
+
+    <!-- SIDEBAR -->
+    <ShellContent Title="Voxelize"
+                  Route="Dashboard"
+                  ContentTemplate="{DataTemplate pages:DashboardPage}" />
 
 
 

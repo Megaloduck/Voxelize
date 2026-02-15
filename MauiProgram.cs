@@ -1,6 +1,8 @@
 ﻿using CommunityToolkit.Maui;
 using Microsoft.Extensions.Logging;
 using Syncfusion.Maui.Toolkit.Hosting;
+using Voxelize.Pages.System;
+using Voxelize.Pages.Tools;
 
 namespace Voxelize
 {
@@ -43,9 +45,18 @@ namespace Voxelize
     		builder.Services.AddLogging(configure => configure.AddDebug());
 #endif
 
-
             builder.Services.AddSingleton<MainPageModel>();
 
+            // Core Fundamental Pages
+            builder.Services.AddTransient<DashboardPage>();  
+
+            // Tools Pages
+            builder.Services.AddTransient<DitheringPage>();
+            builder.Services.AddTransient<PosterizationPage>();
+            builder.Services.AddTransient<SamplingPage>();
+
+            // Main Menu Pages            
+            builder.Services.AddTransient<SettingsPage>();
 
             return builder.Build();
         }

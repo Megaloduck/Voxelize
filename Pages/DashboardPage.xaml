@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Voxelize.Pages.DashboardPage"
+             Title="DashboardPage"
+                          BackgroundColor="{DynamicResource PageBackgroundColor}">
+
+    <Grid ColumnDefinitions="250,*">
+
+        <!-- Left Sidebar - Fixed -->
+        <Border Grid.Column="0"
+                Background="{DynamicResource SidebarBackgroundColor}"
+                Padding="0"
+                StrokeThickness="0"
+                StrokeShape="RoundRectangle 0,15,0,15">
+
+            <Grid RowDefinitions="Auto,*,Auto">
+
+                <!-- Sidebar Header -->
+                <Border Grid.Row="0" 
+                        Padding="20,10,20,0"
+                        StrokeShape="RoundRectangle 0"
+                        StrokeThickness="0"
+                        Background="{DynamicResource HeaderBackgroundColor}">
+
+                    <VerticalStackLayout Spacing="0">
+                        <HorizontalStackLayout Spacing="12" HorizontalOptions="Start">
+                            <Border Background="{DynamicResource PrimaryColor}"
+                                    WidthRequest="40"
+                                    HeightRequest="40"
+                                    Padding="0"
+                                    StrokeThickness="0"
+                                    StrokeShape="RoundRectangle 5">
+                                <Label Text="PS" 
+                                       FontSize="18"    
+                                       FontAttributes="Bold"
+                                       TextColor="White"
+                                       HorizontalOptions="Center"
+                                       VerticalOptions="Center"/>
+                            </Border>
+                            <VerticalStackLayout Spacing="0" VerticalOptions="Center">
+                                <Label Text="Voxelize" 
+                                       FontSize="16" 
+                                       FontAttributes="Bold" 
+                                       TextColor="{DynamicResource PrimaryTextColor}"/>
+                                <Label Text="Pixel Art Converter" 
+                                       FontSize="11" 
+                                       TextColor="{DynamicResource SecondaryTextColor}"/>
+                            </VerticalStackLayout>
+                        </HorizontalStackLayout>
+
+                        <!-- User Role Badge -->
+                        <Border Background="{DynamicResource CardBackgroundColor}"
+                                Padding="10,5,10,5"
+                                StrokeShape="RoundRectangle 7.5"
+                                StrokeThickness="0"
+                                Margin="0,5">
+
+                            <HorizontalStackLayout Spacing="8" VerticalOptions="Center" >
+                                <Label Text="👤" FontSize="14"/>
+                                <Label Text="Duck Species"                                       
+                                       FontSize="13"
+                                       FontAttributes="Bold"
+                                       TextColor="{StaticResource Primary}"/>
+                            </HorizontalStackLayout>
+                        </Border>
+
+                        <BoxView HeightRequest="1" Color="{DynamicResource BorderColor}"/>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Navigation Menu -->
+                <ScrollView Grid.Row="1" Padding="12,8">
+                    <VerticalStackLayout Spacing="2">
+
+                        <!-- TOOLS Section -->
+                        <Label Text="Tools" Style="{StaticResource SidebarSectionHeader}" Margin="12,16,12,4"/>
+
+                        <Border Style="{StaticResource SidebarItemStyle}">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding NavigateToTools1Command}"/>
+                            </Border.GestureRecognizers>
+                            <HorizontalStackLayout Spacing="12" Padding="12,12">
+                                <Border Style="{StaticResource SidebarLayout}">
+                                    <Label Text="📦" FontSize="16" HorizontalOptions="Center" VerticalOptions="Center"/>
+                                </Border>
+                                <VerticalStackLayout Spacing="0" VerticalOptions="Center">
+                                    <Label Text="Sampling" Style="{StaticResource SidebarItemText}"/>
+                                    <Label Text="Resolution Sampler   " FontSize="10" TextColor="{DynamicResource SecondaryTextColor}"/>
+                                </VerticalStackLayout>
+                            </HorizontalStackLayout>
+                        </Border>
+
+                        <Border Style="{StaticResource SidebarItemStyle}">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding NavigateToTools2Command}"/>
+                            </Border.GestureRecognizers>
+                            <HorizontalStackLayout Spacing="12" Padding="12,12">
+                                <Border Style="{StaticResource SidebarLayout}">
+                                    <Label Text="🛒" FontSize="16" HorizontalOptions="Center" VerticalOptions="Center"/>
+                                </Border>
+                                <VerticalStackLayout Spacing="0" VerticalOptions="Center">
+                                    <Label Text="Posterization" Style="{StaticResource SidebarItemText}"/>
+                                    <Label Text="Palette Limiter" FontSize="10" TextColor="{DynamicResource SecondaryTextColor}"/>
+                                </VerticalStackLayout>
+                            </HorizontalStackLayout>
+                        </Border>
+
+                        <Border Style="{StaticResource SidebarItemStyle}">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding NavigateToTools3Command}"/>
+                            </Border.GestureRecognizers>
+                            <HorizontalStackLayout Spacing="12" Padding="12,12">
+                                <Border Style="{StaticResource SidebarLayout}">
+                                    <Label Text="📈" FontSize="16" HorizontalOptions="Center" VerticalOptions="Center"/>
+                                </Border>
+                                <VerticalStackLayout Spacing="0" VerticalOptions="Center">
+                                    <Label Text="Dithering" Style="{StaticResource SidebarItemText}"/>
+                                    <Label Text="Simulating Gradients" FontSize="10" TextColor="{DynamicResource SecondaryTextColor}"/>
+                                </VerticalStackLayout>
+                            </HorizontalStackLayout>
+                        </Border>
+
+                        <!-- SYSTEM Section -->
+                        <Label Text="SYSTEM" Style="{StaticResource SidebarSectionHeader}" Margin="12,16,12,4"/>
+
+                        <Border Style="{StaticResource SidebarItemStyle}">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding NavigateToSettingsCommand}"/>
+                            </Border.GestureRecognizers>
+                            <HorizontalStackLayout Spacing="12" Padding="12,12">
+                                <Border Style="{StaticResource SidebarLayout}">
+                                    <Label Text="⚙️" FontSize="16" HorizontalOptions="Center" VerticalOptions="Center"/>
+                                </Border>
+                                <VerticalStackLayout Spacing="0" VerticalOptions="Center">
+                                    <Label Text="Settings" Style="{StaticResource SidebarItemText}"/>
+                                    <Label Text="System configuration" FontSize="10" TextColor="{DynamicResource SecondaryTextColor}"/>
+                                </VerticalStackLayout>
+                            </HorizontalStackLayout>
+                        </Border>
+
+                    </VerticalStackLayout>
+                </ScrollView>
+
+                <!-- Sidebar Footer -->
+                <Border Grid.Row="2" StrokeThickness="0" Padding="20,0,20,10" StrokeShape="RoundRectangle 0"
+                        Background="{DynamicResource HeaderBackgroundColor}">
+                    <VerticalStackLayout Spacing="5" HorizontalOptions="Center" VerticalOptions="Center">
+                        <BoxView HeightRequest="1" Color="{DynamicResource BorderColor}"/>
+
+                        <Border Background="Transparent" Padding="0" StrokeThickness="0">
+                            <HorizontalStackLayout Spacing="10">
+                                <Label Text="{Binding IsDarkMode}" FontSize="16" VerticalOptions="Center" TextColor="{DynamicResource SecondaryTextColor}" />
+                                <Label Text="Dark Mode" FontSize="12" TextColor="{DynamicResource PrimaryTextColor}" VerticalOptions="Center" />
+                                <Switch IsToggled="{Binding IsDarkMode}" OnColor="{DynamicResource Primary}" ThumbColor="White" VerticalOptions="Center" Scale="0.7"/>
+                            </HorizontalStackLayout>
+                        </Border>
+
+                        <HorizontalStackLayout Spacing="5" Padding="5">
+                            <Label Text="✓" FontSize="10" TextColor="{DynamicResource SuccessColor}" VerticalOptions="Center"/>
+                            <Label Text="v1.0.0 • LAN Ready" FontSize="10" TextColor="{DynamicResource TertiaryTextColor}"/>
+                        </HorizontalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+
+            </Grid>
+        </Border>
+
+        <!-- Right Content Area -->
+        <ContentView Grid.Column="1" x:Name="ContentArea" />
+
+    </Grid>
+
+</ContentPage>

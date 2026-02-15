@@ -9,28 +9,32 @@
              x:Class="Voxelize.Pages.MainPage"
              x:Name="OverviewPage"
              Title="{Binding Today}">
+    
+    <ScrollView>
 
-    <VerticalStackLayout Padding="20" Spacing="10">
+        <VerticalStackLayout Padding="20" Spacing="10">
 
-        <Button Text="Load Image"
+            <Button Text="Load Image"
                 Command="{Binding LoadImageCommand}" />
 
-        <Label Text="Pixel Size"/>
-        <Slider Minimum="2"
+            <Label Text="Pixel Size"/>
+            <Slider Minimum="2"
                 Maximum="32"
                 Value="{Binding PixelSize}" />
 
-        <Label Text="Color Depth"/>
-        <Slider Minimum="2"
+            <Label Text="Color Depth"/>
+            <Slider Minimum="2"
                 Maximum="64"
                 Value="{Binding ColorDepth}" />
 
-        <Button Text="Convert"
+            <Button Text="Convert"
                 Command="{Binding ApplyPixelArtCommand}" />
 
-        <Image HeightRequest="300"
+            <Image HeightRequest="300"
                Source="{Binding PreviewImage}" />
 
-    </VerticalStackLayout>
+        </VerticalStackLayout>
+    </ScrollView>
+
 
 </ContentPage>
