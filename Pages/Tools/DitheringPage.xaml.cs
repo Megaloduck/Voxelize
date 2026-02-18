@@ -5,9 +5,9 @@ namespace Voxelize.Pages.Tools;
 
 public partial class DitheringPage : ContentPage
 {
-	public DitheringPage(MainPageModel pageModel)
+	public DitheringPage()
 	{
 		InitializeComponent();
-        BindingContext = pageModel;
+        BindingContext = new DitheringPageModel();
     }
 }

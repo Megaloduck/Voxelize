@@ -7,6 +7,6 @@ public partial class SamplingPage : ContentPage
     public SamplingPage ()
     {
         InitializeComponent();
-        BindingContext = SamplingPageModel;
+        BindingContext = new SamplingPageModel();
     }
 }

@@ -41,16 +41,13 @@ namespace Voxelize.PageModels.Tools
         {
             if (_originalBitmap == null) return;
 
-            var result = _service.ConvertToPixelArt(
-                _originalBitmap,
-                PixelSize,
-                ColorDepth);
+            var result = _service.ConvertToPixelArt(_originalBitmap, PixelSize, ColorDepth);
 
             using var image = SKImage.FromBitmap(result);
             using var data = image.Encode();
 
-            PreviewImage = ImageSource.FromStream(() =>
-                new MemoryStream(data.ToArray()));
+            var bytes = data.ToArray(); // ✅ Copy bytes before disposal
+            PreviewImage = ImageSource.FromStream(() => new MemoryStream(bytes));
         }
     }
  
