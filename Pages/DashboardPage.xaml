@@ -70,7 +70,7 @@
                 </Border>
 
                 <!-- Navigation Menu -->
-                <ScrollView Grid.Row="1" Padding="12,8">
+                <ScrollView Grid.Row="1" Padding="12,0">
                     <VerticalStackLayout Spacing="2">
 
                         <!-- TOOLS Section -->
@@ -78,7 +78,7 @@
 
                         <Border Style="{StaticResource SidebarItemStyle}">
                             <Border.GestureRecognizers>
-                                <TapGestureRecognizer Command="{Binding NavigateToTools1Command}"/>
+                                <TapGestureRecognizer Command="{Binding NavigateToSamplingCommand}"/>
                             </Border.GestureRecognizers>
                             <HorizontalStackLayout Spacing="12" Padding="12,12">
                                 <Border Style="{StaticResource SidebarLayout}">
@@ -93,7 +93,7 @@
 
                         <Border Style="{StaticResource SidebarItemStyle}">
                             <Border.GestureRecognizers>
-                                <TapGestureRecognizer Command="{Binding NavigateToTools2Command}"/>
+                                <TapGestureRecognizer Command="{Binding NavigateToPosterizationCommand}"/>
                             </Border.GestureRecognizers>
                             <HorizontalStackLayout Spacing="12" Padding="12,12">
                                 <Border Style="{StaticResource SidebarLayout}">
@@ -108,7 +108,7 @@
 
                         <Border Style="{StaticResource SidebarItemStyle}">
                             <Border.GestureRecognizers>
-                                <TapGestureRecognizer Command="{Binding NavigateToTools3Command}"/>
+                                <TapGestureRecognizer Command="{Binding NavigateToDitheringCommand}"/>
                             </Border.GestureRecognizers>
                             <HorizontalStackLayout Spacing="12" Padding="12,12">
                                 <Border Style="{StaticResource SidebarLayout}">

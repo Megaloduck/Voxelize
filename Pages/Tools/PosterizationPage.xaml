@@ -7,6 +7,7 @@
         <Label 
             Text="Welcome to .NET MAUI!"
             VerticalOptions="Center" 
+            FontSize="40"
             HorizontalOptions="Center" />
     </VerticalStackLayout>
 </ContentPage>
