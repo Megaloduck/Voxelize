@@ -52,7 +52,6 @@ namespace Voxelize.PageModels
         // COMMANDS
         // -------------------------------
         public ICommand NavigateToDashboardCommand { get; private set; }
-        public ICommand NavigateToOverviewCommand { get; private set; }
 
         public ICommand NavigateToSamplingCommand { get; private set; }
         public ICommand NavigateToPosterizationCommand { get; private set; }

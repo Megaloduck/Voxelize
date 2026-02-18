@@ -48,7 +48,7 @@ namespace Voxelize
             builder.Services.AddSingleton<MainPageModel>();
 
             // Core Fundamental Pages
-            builder.Services.AddTransient<DashboardPage>();
+            builder.Services.AddSingleton<DashboardPage>();
             builder.Services.AddSingleton<DashboardPageModel>();
 
             // Tools Pages
