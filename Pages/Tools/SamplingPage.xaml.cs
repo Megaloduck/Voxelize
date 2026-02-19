@@ -4,7 +4,7 @@ namespace Voxelize.Pages.Tools;
 
 public partial class SamplingPage : ContentPage
 {
-    public SamplingPage ()
+    public SamplingPage()
     {
         InitializeComponent();
         BindingContext = new SamplingPageModel();

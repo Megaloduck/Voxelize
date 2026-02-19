@@ -43,5 +43,17 @@ namespace Voxelize.Services
 
             return result;
         }
+        public SKBitmap Downsample(SKBitmap source, int gridSize)
+        {
+            // Step 1: shrink to gridSize × gridSize
+            var small = source.Resize(
+                new SKImageInfo(gridSize, gridSize),
+                SKFilterQuality.Medium);
+
+            // Step 2: scale back up — nearest-neighbour keeps hard pixel edges
+            return small.Resize(
+                new SKImageInfo(source.Width, source.Height),
+                SKFilterQuality.None);
+        }
     }
 }

@@ -1,4 +1,4 @@
-using Voxelize.Models;
+﻿using Voxelize.Models;
 using Voxelize.PageModels;
 
 namespace Voxelize.Pages;
@@ -21,10 +21,14 @@ public partial class DashboardPage : ContentPage
 
     private void NavigateToPage(Page page)
     {
-        // Cast to ContentPage and extract the Content
         if (page is ContentPage contentPage)
         {
-            ContentArea.Content = contentPage.Content;
+            contentPage.Parent = null; // detach from any previous parent
+            ContentArea.Content = new ContentView
+            {
+                Content = contentPage.Content,
+                BindingContext = contentPage.BindingContext  // ✅ carry the correct model
+            };
         }
     }
 }
