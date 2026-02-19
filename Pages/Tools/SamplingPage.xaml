@@ -2,117 +2,207 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Voxelize.Pages.Tools.SamplingPage"
+             xmlns:local="clr-namespace:Voxelize.Pages.Tools"
              BackgroundColor="{DynamicResource PageBackgroundColor}"
              Title="Sampling">
 
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <local:LockIconConverter   x:Key="LockIconConverter"/>
+            <local:InverseBoolConverter x:Key="InverseBoolConverter"/>
+            <local:GreaterThanOneConverter x:Key="GreaterThanOneConverter"/>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
     <ScrollView>
-        <VerticalStackLayout Padding="24" Spacing="16">
+        <Grid ColumnDefinitions="*,320" Padding="24" ColumnSpacing="20">
 
-            <!-- ── Header ───────────────────────────────────────── -->
-            <Label Text="Resolution Sampling"
-                   FontSize="22" FontAttributes="Bold"
-                   TextColor="{DynamicResource PrimaryTextColor}"/>
-            <Label Text="Downsample your image into a pixel-art grid."
-                   FontSize="13"
-                   TextColor="{DynamicResource SecondaryTextColor}"/>
+            <!-- ══ LEFT COLUMN — Controls + Preview ══════════════════ -->
+            <VerticalStackLayout Grid.Column="0" Spacing="16">
 
-            <!-- ── Load Button ───────────────────────────────────── -->
-            <Button Text="📂  Load Image"
-                    Command="{Binding LoadImageCommand}"
-                    HorizontalOptions="Start"
-                    Padding="16,10"/>
+                <!-- Header -->
+                <Label Text="Resolution Sampling"
+                       FontSize="22" FontAttributes="Bold"
+                       TextColor="{DynamicResource PrimaryTextColor}"/>
+                <Label Text="Downsample your image into a pixel-art grid."
+                       FontSize="13"
+                       TextColor="{DynamicResource SecondaryTextColor}"/>
 
-            <!-- ── Controls Card ─────────────────────────────────── -->
-            <Border StrokeShape="RoundRectangle 10"
+                <!-- Load -->
+                <Button Text="📂  Load Image"
+                        Command="{Binding LoadImageCommand}"
+                        HorizontalOptions="Start"
+                        Padding="16,10"/>
+
+                <!-- Controls Card -->
+                <Border StrokeShape="RoundRectangle 10"
+                        StrokeThickness="0"
+                        Background="{DynamicResource CardBackgroundColor}"
+                        Padding="16"
+                        IsEnabled="{Binding HasImage}">
+                    <VerticalStackLayout Spacing="14">
+
+                        <Label Text="Grid Resolution" FontAttributes="Bold"
+                               TextColor="{DynamicResource PrimaryTextColor}"/>
+
+                        <!-- Presets -->
+                        <HorizontalStackLayout Spacing="8">
+                            <Button Text="16×16"   Command="{Binding SetPresetCommand}" CommandParameter="16"  Padding="10,6" FontSize="12"/>
+                            <Button Text="32×32"   Command="{Binding SetPresetCommand}" CommandParameter="32"  Padding="10,6" FontSize="12"/>
+                            <Button Text="64×64"   Command="{Binding SetPresetCommand}" CommandParameter="64"  Padding="10,6" FontSize="12"/>
+                            <Button Text="128×128" Command="{Binding SetPresetCommand}" CommandParameter="128" Padding="10,6" FontSize="12"/>
+                        </HorizontalStackLayout>
+
+                        <!-- W × H + Lock -->
+                        <HorizontalStackLayout Spacing="10" VerticalOptions="Center">
+
+                            <!-- Width -->
+                            <VerticalStackLayout Spacing="4">
+                                <Label Text="Width" FontSize="11"
+                                       TextColor="{DynamicResource SecondaryTextColor}"/>
+                                <Border StrokeShape="RoundRectangle 6"
+                                        StrokeThickness="1"
+                                        Stroke="{DynamicResource BorderColor}"
+                                        Padding="4,0" WidthRequest="70">
+                                    <Entry Text="{Binding CustomWidth}"
+                                           Keyboard="Numeric"
+                                           HorizontalTextAlignment="Center"/>
+                                </Border>
+                            </VerticalStackLayout>
+
+                            <!-- Lock Toggle -->
+                            <VerticalStackLayout Spacing="4" VerticalOptions="End">
+                                <Label Text=" " FontSize="11"/>
+                                <Button Text="{Binding IsLocked, Converter={StaticResource LockIconConverter}}"
+                                        Command="{Binding ToggleLockCommand}"
+                                        Padding="8,6"
+                                        FontSize="16"
+                                        BackgroundColor="Transparent"
+                                        TextColor="{DynamicResource PrimaryTextColor}"/>
+                            </VerticalStackLayout>
+
+                            <!-- Height -->
+                            <VerticalStackLayout Spacing="4">
+                                <Label Text="Height" FontSize="11"
+                                       TextColor="{DynamicResource SecondaryTextColor}"/>
+                                <Border StrokeShape="RoundRectangle 6"
+                                        StrokeThickness="1"
+                                        Stroke="{DynamicResource BorderColor}"
+                                        Padding="4,0" WidthRequest="70">
+                                    <Entry Text="{Binding CustomHeight}"
+                                           Keyboard="Numeric"
+                                           HorizontalTextAlignment="Center"
+                                           IsEnabled="{Binding IsLocked, Converter={StaticResource InverseBoolConverter}}"/>
+                                </Border>
+                            </VerticalStackLayout>
+
+                            <Label Text="px" VerticalOptions="End"
+                                   Margin="0,0,0,8"
+                                   TextColor="{DynamicResource SecondaryTextColor}"/>
+                        </HorizontalStackLayout>
+
+                        <!-- Grid Overlay -->
+                        <HorizontalStackLayout Spacing="10" VerticalOptions="Center">
+                            <Switch IsToggled="{Binding ShowGridOverlay}"
+                                    OnColor="{DynamicResource Primary}"
+                                    ThumbColor="White"
+                                    Scale="0.85"
+                                    VerticalOptions="Center"/>
+                            <Label Text="Show grid overlay"
+                                   VerticalOptions="Center"
+                                   TextColor="{DynamicResource PrimaryTextColor}"/>
+                        </HorizontalStackLayout>
+
+                        <!-- Actions -->
+                        <HorizontalStackLayout Spacing="10">
+                            <Button Text="▶  Convert" Command="{Binding ConvertCommand}" Padding="16,10"/>
+                            <Button Text="💾  Export"  Command="{Binding ExportCommand}"  Padding="16,10"/>
+                        </HorizontalStackLayout>
+
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Status -->
+                <Label Text="{Binding StatusText}"
+                       FontSize="12"
+                       TextColor="{DynamicResource SecondaryTextColor}"
+                       HorizontalOptions="Center"/>
+
+                <ActivityIndicator IsRunning="{Binding IsBusy}"
+                                   IsVisible="{Binding IsBusy}"
+                                   HorizontalOptions="Center"/>
+
+                <!-- Preview Image -->
+                <Label Text="Preview" FontAttributes="Bold" FontSize="15"
+                       TextColor="{DynamicResource PrimaryTextColor}"
+                       IsVisible="{Binding HasImage}"/>
+
+                <Image Source="{Binding PreviewImage}"
+                       IsVisible="{Binding HasImage}"
+                       Aspect="AspectFit"
+                       HeightRequest="400"/>
+
+            </VerticalStackLayout>
+
+            <!-- ══ RIGHT COLUMN — Hex Panel ══════════════════════════ -->
+            <Border Grid.Column="1"
+                    StrokeShape="RoundRectangle 10"
                     StrokeThickness="0"
                     Background="{DynamicResource CardBackgroundColor}"
-                    Padding="16">
-                <VerticalStackLayout Spacing="14" IsEnabled="{Binding HasImage}">
+                    Padding="16"
+                    IsVisible="{Binding HasHexCodes}"
+                    VerticalOptions="Start">
 
-                    <!-- Grid Size Label -->
-                    <Label Text="Grid Size" FontAttributes="Bold"
+                <VerticalStackLayout Spacing="10">
+
+                    <!-- Panel Header -->
+                    <Label Text="Pixel Hex Codes" FontAttributes="Bold" FontSize="15"
                            TextColor="{DynamicResource PrimaryTextColor}"/>
 
-                    <!-- Preset Buttons -->
-                    <HorizontalStackLayout Spacing="8">
-                        <Button Text="16×16"  Command="{Binding SetPresetCommand}" CommandParameter="16"  Padding="12,6" FontSize="12"/>
-                        <Button Text="32×32"  Command="{Binding SetPresetCommand}" CommandParameter="32"  Padding="12,6" FontSize="12"/>
-                        <Button Text="64×64"  Command="{Binding SetPresetCommand}" CommandParameter="64"  Padding="12,6" FontSize="12"/>
-                        <Button Text="128×128" Command="{Binding SetPresetCommand}" CommandParameter="128" Padding="12,6" FontSize="12"/>
-                    </HorizontalStackLayout>
+                    <Label FontSize="11" TextColor="{DynamicResource SecondaryTextColor}">
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <Span Text="Page "/>
+                                <Span Text="{Binding CurrentPage}"/>
+                                <Span Text=" of "/>
+                                <Span Text="{Binding TotalPages}"/>
+                            </FormattedString>
+                        </Label.FormattedText>
+                    </Label>
 
-                    <!-- Custom Entry -->
-                    <HorizontalStackLayout Spacing="10" VerticalOptions="Center">
-                        <Label Text="Custom:"
-                               VerticalOptions="Center"
-                               TextColor="{DynamicResource SecondaryTextColor}"/>
-                        <Border StrokeShape="RoundRectangle 6"
-                                StrokeThickness="1"
-                                Stroke="{DynamicResource BorderColor}"
-                                Padding="4,0"
-                                WidthRequest="80">
-                            <Entry Text="{Binding CustomGridSize}"
-                                   Keyboard="Numeric"
-                                   HorizontalTextAlignment="Center"
-                                   ReturnCommand="{Binding ApplyCustomGridSizeCommand}"/>
-                        </Border>
-                        <Label Text="px"
-                               VerticalOptions="Center"
-                               TextColor="{DynamicResource SecondaryTextColor}"/>
-                        <Button Text="Apply"
-                                Command="{Binding ApplyCustomGridSizeCommand}"
-                                Padding="10,6" FontSize="12"/>
-                    </HorizontalStackLayout>
+                    <BoxView HeightRequest="1" Color="{DynamicResource BorderColor}"/>
 
-                    <!-- Grid Overlay Toggle -->
-                    <HorizontalStackLayout Spacing="10" VerticalOptions="Center">
-                        <Switch IsToggled="{Binding ShowGridOverlay}"
-                                OnColor="{DynamicResource Primary}"
-                                ThumbColor="White"
-                                Scale="0.85"
-                                VerticalOptions="Center"/>
-                        <Label Text="Show grid overlay"
-                               VerticalOptions="Center"
-                               TextColor="{DynamicResource PrimaryTextColor}"/>
-                    </HorizontalStackLayout>
+                    <!-- Hex List -->
+                    <CollectionView ItemsSource="{Binding HexCodes}"
+                                    HeightRequest="520"
+                                    SelectionMode="None">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Label Text="{Binding .}"
+                                       FontFamily="Courier New"
+                                       FontSize="12"
+                                       Padding="4,3"
+                                       TextColor="{DynamicResource PrimaryTextColor}"/>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
 
-                    <!-- Convert + Export -->
-                    <HorizontalStackLayout Spacing="10">
-                        <Button Text="▶  Convert"
-                                Command="{Binding ConvertCommand}"
-                                Padding="16,10"/>
-                        <Button Text="💾  Export"
-                                Command="{Binding ExportCommand}"
-                                Padding="16,10"
-                                IsEnabled="{Binding HasImage}"/>
+                    <BoxView HeightRequest="1" Color="{DynamicResource BorderColor}"/>
+
+                    <!-- Pagination -->
+                    <HorizontalStackLayout Spacing="10" HorizontalOptions="Center">
+                        <Button Text="◀ Prev"
+                                Command="{Binding PrevPageCommand}"
+                                Padding="12,6" FontSize="12"
+                                IsEnabled="{Binding CurrentPage, Converter={StaticResource GreaterThanOneConverter}}"/>
+                        <Button Text="Next ▶"
+                                Command="{Binding NextPageCommand}"
+                                Padding="12,6" FontSize="12"/>
                     </HorizontalStackLayout>
 
                 </VerticalStackLayout>
             </Border>
 
-            <!-- ── Status Bar ────────────────────────────────────── -->
-            <Label Text="{Binding StatusText}"
-                   FontSize="12"
-                   TextColor="{DynamicResource SecondaryTextColor}"
-                   HorizontalOptions="Center"/>
-
-            <!-- ── Activity Indicator ────────────────────────────── -->
-            <ActivityIndicator IsRunning="{Binding IsBusy}"
-                               IsVisible="{Binding IsBusy}"
-                               HorizontalOptions="Center"/>
-
-            <!-- ── Preview ───────────────────────────────────────── -->
-            <Label Text="Preview"
-                   FontAttributes="Bold"
-                   FontSize="15"
-                   TextColor="{DynamicResource PrimaryTextColor}"
-                   IsVisible="{Binding HasImage}"/>
-
-            <Image Source="{Binding PreviewImage}"
-                   IsVisible="{Binding HasImage}"
-                   Aspect="AspectFit"
-                   HeightRequest="400"/>
-
-        </VerticalStackLayout>
+        </Grid>
     </ScrollView>
 </ContentPage>
