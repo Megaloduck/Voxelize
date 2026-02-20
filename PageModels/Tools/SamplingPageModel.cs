@@ -21,21 +21,22 @@ namespace Voxelize.PageModels.Tools
         // ─── Grid Size ────────────────────────────────────────────────
         [ObservableProperty] string customWidth = "32";
         [ObservableProperty] string customHeight = "32";
-        [ObservableProperty] bool isLocked = true; // square lock
+        [ObservableProperty] bool isLocked = true;
 
         // ─── Grid Overlay ─────────────────────────────────────────────
         [ObservableProperty] bool showGridOverlay = false;
 
-        // ─── Hex Panel ───────────────────────────────────────────────
+        // ─── LED Output ───────────────────────────────────────────────
         [ObservableProperty] string selectedFormat = "Arduino / FastLED";
         [ObservableProperty] string formattedOutput = string.Empty;
         [ObservableProperty] bool hasHexCodes = false;
+
         public List<string> FormatOptions { get; } = new()
         {
             "Arduino / FastLED",
             "Arduino / NeoPixel",
             "Raw Hex Array",
-            "Python / MicroPython",   
+            "Python / MicroPython",
             "Python / Pillow RGB",
             "CSS Hex",
             "JSON",
@@ -48,15 +49,7 @@ namespace Voxelize.PageModels.Tools
         private List<SKColor> _allPixelColors = new();
         private int _gridW, _gridH;
 
-        partial void OnSelectedFormatChanged(string value) => RebuildOutput();
-
-        private void RebuildOutput()
-        {
-            if (_allPixelColors.Count == 0) return;
-            FormattedOutput = LedFormatter.Format(_allPixelColors, _gridW, _gridH, SelectedFormat);
-        }
-
-        // ─── Lock sync: when locked, W change mirrors to H ────────────
+        // ─── Lock Sync ────────────────────────────────────────────────
         partial void OnCustomWidthChanged(string value)
         {
             if (IsLocked) CustomHeight = value;
@@ -67,7 +60,11 @@ namespace Voxelize.PageModels.Tools
             if (IsLocked) CustomWidth = value;
         }
 
-        // ─── Preset ───────────────────────────────────────────────────
+        partial void OnSelectedFormatChanged(string value) => RebuildOutput();
+        partial void OnShowGridOverlayChanged(bool value) => Convert();
+
+        // ─── Commands ─────────────────────────────────────────────────
+
         [RelayCommand]
         void SetPreset(string size)
         {
@@ -75,15 +72,13 @@ namespace Voxelize.PageModels.Tools
             CustomHeight = size;
         }
 
-        // ─── Toggle Lock ──────────────────────────────────────────────
         [RelayCommand]
         void ToggleLock()
         {
             IsLocked = !IsLocked;
-            if (IsLocked) CustomHeight = CustomWidth; // snap to square on lock
+            if (IsLocked) CustomHeight = CustomWidth;
         }
 
-        // ─── Load ─────────────────────────────────────────────────────
         [RelayCommand]
         async Task LoadImage()
         {
@@ -109,7 +104,6 @@ namespace Voxelize.PageModels.Tools
             Convert();
         }
 
-        // ─── Convert ──────────────────────────────────────────────────
         [RelayCommand]
         void Convert()
         {
@@ -137,47 +131,25 @@ namespace Voxelize.PageModels.Tools
 
             PreviewImage = BitmapToImageSource(displayBitmap);
 
-            // Build hex list
-            // after _resultBitmap is set inside Convert()
+            // Extract colors and build LED output
             _allPixelColors = ExtractPixelColors(_resultBitmap, w, h);
             _gridW = w;
             _gridH = h;
             RebuildOutput();
+
             HasHexCodes = _allPixelColors.Count > 0;
-        }
-
-        // ─── Pagination ───────────────────────────────────────────────
-        [RelayCommand]
-        void NextPage()
-        {
-            if (CurrentPage < TotalPages)
-            {
-                CurrentPage++;
-                LoadPage(CurrentPage);
-            }
+            StatusText = $"Output: {w}×{h} grid → {_resultBitmap.Width}×{_resultBitmap.Height}px | {_allPixelColors.Count} pixels";
+            IsBusy = false;
         }
 
         [RelayCommand]
-        void PrevPage()
+        async Task CopyOutput()
         {
-            if (CurrentPage > 1)
-            {
-                CurrentPage--;
-                LoadPage(CurrentPage);
-            }
+            if (string.IsNullOrEmpty(FormattedOutput)) return;
+            await Clipboard.Default.SetTextAsync(FormattedOutput);
+            StatusText = "Copied to clipboard!";
         }
 
-        private void LoadPage(int page)
-        {
-            int skip = (page - 1) * PageSize;
-            var slice = _allHexCodes.Skip(skip).Take(PageSize);
-            HexCodes = new ObservableCollection<string>(slice);
-        }
-
-        // ─── Toggle Grid Overlay ──────────────────────────────────────
-        partial void OnShowGridOverlayChanged(bool value) => Convert();
-
-        // ─── Export ───────────────────────────────────────────────────
         [RelayCommand]
         async Task Export()
         {
@@ -205,13 +177,12 @@ namespace Voxelize.PageModels.Tools
             }
         }
 
-        // ─── Helpers ─────────────────────────────────────────────────
-        private static ImageSource BitmapToImageSource(SKBitmap bitmap)
+        // ─── Private Helpers ──────────────────────────────────────────
+
+        private void RebuildOutput()
         {
-            using var image = SKImage.FromBitmap(bitmap);
-            using var data = image.Encode();
-            var bytes = data.ToArray();
-            return ImageSource.FromStream(() => new MemoryStream(bytes));
+            if (_allPixelColors.Count == 0) return;
+            FormattedOutput = LedFormatter.Format(_allPixelColors, _gridW, _gridH, SelectedFormat);
         }
 
         private static List<SKColor> ExtractPixelColors(SKBitmap result, int gridW, int gridH)
@@ -229,6 +200,14 @@ namespace Voxelize.PageModels.Tools
                 }
 
             return colors;
+        }
+
+        private static ImageSource BitmapToImageSource(SKBitmap bitmap)
+        {
+            using var image = SKImage.FromBitmap(bitmap);
+            using var data = image.Encode();
+            var bytes = data.ToArray();
+            return ImageSource.FromStream(() => new MemoryStream(bytes));
         }
 
         private static SKBitmap DrawGridOverlay(SKBitmap source, int gridW, int gridH)

@@ -204,7 +204,6 @@ namespace Voxelize.Services
         // cURL — ready to paste, targets WLED JSON API
         private static string Curl(List<SKColor> colors, int gridW)
         {
-            // Builds the compact JSON payload inline
             var iArray = new StringBuilder();
             for (int i = 0; i < colors.Count; i++)
             {
@@ -213,18 +212,17 @@ namespace Voxelize.Services
                 iArray.Append($"{i},\"{c.Red:X2}{c.Green:X2}{c.Blue:X2}\"");
             }
 
-            return
-$"""
-curl -X POST http://<WLED_IP>/json/state \
-  -H "Content-Type: application/json" \
-  -d '{{
-    "on": true,
-    "bri": 255,
-    "seg": [{{
-      "i": [{iArray}]
-    }}]
-  }}'
-""";
+            var sb = new StringBuilder();
+            sb.AppendLine("curl -X POST http://<WLED_IP>/json/state \\");
+            sb.AppendLine("  -H \"Content-Type: application/json\" \\");
+            sb.AppendLine("  -d '{");
+            sb.AppendLine("    \"on\": true,");
+            sb.AppendLine("    \"bri\": 255,");
+            sb.AppendLine("    \"seg\": [{");
+            sb.AppendLine($"      \"i\": [{iArray}]");
+            sb.AppendLine("    }]");
+            sb.AppendLine("  }'");
+            return sb.ToString();
         }
 
         // Home Assistant YAML — uses light.turn_on with an effect or RGB sequence
