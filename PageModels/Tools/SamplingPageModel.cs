@@ -27,13 +27,34 @@ namespace Voxelize.PageModels.Tools
         [ObservableProperty] bool showGridOverlay = false;
 
         // ─── Hex Panel ───────────────────────────────────────────────
-        [ObservableProperty] ObservableCollection<string> hexCodes = new();
-        [ObservableProperty] int currentPage = 1;
-        [ObservableProperty] int totalPages = 1;
+        [ObservableProperty] string selectedFormat = "Arduino / FastLED";
+        [ObservableProperty] string formattedOutput = string.Empty;
         [ObservableProperty] bool hasHexCodes = false;
+        public List<string> FormatOptions { get; } = new()
+        {
+            "Arduino / FastLED",
+            "Arduino / NeoPixel",
+            "Raw Hex Array",
+            "Python / MicroPython",   
+            "Python / Pillow RGB",
+            "CSS Hex",
+            "JSON",
+            "C File (.c)",
+            "WLED JSON",
+            "cURL",
+            "Home Assistant YAML"
+        };
 
-        private List<string> _allHexCodes = new();
-        private const int PageSize = 200;
+        private List<SKColor> _allPixelColors = new();
+        private int _gridW, _gridH;
+
+        partial void OnSelectedFormatChanged(string value) => RebuildOutput();
+
+        private void RebuildOutput()
+        {
+            if (_allPixelColors.Count == 0) return;
+            FormattedOutput = LedFormatter.Format(_allPixelColors, _gridW, _gridH, SelectedFormat);
+        }
 
         // ─── Lock sync: when locked, W change mirrors to H ────────────
         partial void OnCustomWidthChanged(string value)
@@ -117,14 +138,12 @@ namespace Voxelize.PageModels.Tools
             PreviewImage = BitmapToImageSource(displayBitmap);
 
             // Build hex list
-            _allHexCodes = ExtractHexCodes(_resultBitmap, w, h);
-            TotalPages = (int)Math.Ceiling(_allHexCodes.Count / (double)PageSize);
-            CurrentPage = 1;
-            LoadPage(1);
-
-            HasHexCodes = _allHexCodes.Count > 0;
-            StatusText = $"Output: {w}×{h} grid → {_resultBitmap.Width}×{_resultBitmap.Height}px  |  {_allHexCodes.Count} pixels";
-            IsBusy = false;
+            // after _resultBitmap is set inside Convert()
+            _allPixelColors = ExtractPixelColors(_resultBitmap, w, h);
+            _gridW = w;
+            _gridH = h;
+            RebuildOutput();
+            HasHexCodes = _allPixelColors.Count > 0;
         }
 
         // ─── Pagination ───────────────────────────────────────────────
@@ -195,30 +214,21 @@ namespace Voxelize.PageModels.Tools
             return ImageSource.FromStream(() => new MemoryStream(bytes));
         }
 
-        private static List<string> ExtractHexCodes(SKBitmap result, int gridW, int gridH)
+        private static List<SKColor> ExtractPixelColors(SKBitmap result, int gridW, int gridH)
         {
-            // Sample the centre of each pixel block
             int cellW = result.Width / gridW;
             int cellH = result.Height / gridH;
-
-            var codes = new List<string>(gridW * gridH);
+            var colors = new List<SKColor>(gridW * gridH);
 
             for (int row = 0; row < gridH; row++)
-            {
                 for (int col = 0; col < gridW; col++)
                 {
-                    int px = col * cellW + cellW / 2;
-                    int py = row * cellH + cellH / 2;
-
-                    px = Math.Clamp(px, 0, result.Width - 1);
-                    py = Math.Clamp(py, 0, result.Height - 1);
-
-                    var c = result.GetPixel(px, py);
-                    codes.Add($"#{c.Red:X2}{c.Green:X2}{c.Blue:X2}");
+                    int px = Math.Clamp(col * cellW + cellW / 2, 0, result.Width - 1);
+                    int py = Math.Clamp(row * cellH + cellH / 2, 0, result.Height - 1);
+                    colors.Add(result.GetPixel(px, py));
                 }
-            }
 
-            return codes;
+            return colors;
         }
 
         private static SKBitmap DrawGridOverlay(SKBitmap source, int gridW, int gridH)

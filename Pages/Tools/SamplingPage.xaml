@@ -144,7 +144,7 @@
 
             </VerticalStackLayout>
 
-            <!-- ══ RIGHT COLUMN — Hex Panel ══════════════════════════ -->
+            <!-- ══ RIGHT COLUMN — LED Output Panel ══════════════════════ -->
             <Border Grid.Column="1"
                     StrokeShape="RoundRectangle 10"
                     StrokeThickness="0"
@@ -153,53 +153,44 @@
                     IsVisible="{Binding HasHexCodes}"
                     VerticalOptions="Start">
 
-                <VerticalStackLayout Spacing="10">
+                <VerticalStackLayout Spacing="12">
 
-                    <!-- Panel Header -->
-                    <Label Text="Pixel Hex Codes" FontAttributes="Bold" FontSize="15"
+                    <!-- Header -->
+                    <Label Text="LED Matrix Output" FontAttributes="Bold" FontSize="15"
                            TextColor="{DynamicResource PrimaryTextColor}"/>
+                    
+                    <!-- Format Picker -->
+                    <Label Text="Target Format" FontSize="11"
+                           TextColor="{DynamicResource SecondaryTextColor}"/>
+                    <Border StrokeShape="RoundRectangle 6"
+                            StrokeThickness="1"
+                            Stroke="{DynamicResource BorderColor}"
+                            Padding="4,0">
+                        <Picker ItemsSource="{Binding FormatOptions}"
+                                SelectedItem="{Binding SelectedFormat}"
+                                TextColor="{DynamicResource PrimaryTextColor}"/>
+                    </Border>
+                    
+                    <BoxView HeightRequest="1" Color="{DynamicResource BorderColor}"/>
 
-                    <Label FontSize="11" TextColor="{DynamicResource SecondaryTextColor}">
-                        <Label.FormattedText>
-                            <FormattedString>
-                                <Span Text="Page "/>
-                                <Span Text="{Binding CurrentPage}"/>
-                                <Span Text=" of "/>
-                                <Span Text="{Binding TotalPages}"/>
-                            </FormattedString>
-                        </Label.FormattedText>
-                    </Label>
+                    <!-- Output Editor -->
+                    <Editor Text="{Binding FormattedOutput}"
+                            IsReadOnly="True"
+                            FontFamily="Courier New"
+                            FontSize="11"
+                            HeightRequest="480"
+                            AutoSize="Disabled"
+                            TextColor="{DynamicResource PrimaryTextColor}"
+                            BackgroundColor="Transparent"/>
 
                     <BoxView HeightRequest="1" Color="{DynamicResource BorderColor}"/>
 
-                    <!-- Hex List -->
-                    <CollectionView ItemsSource="{Binding HexCodes}"
-                                    HeightRequest="520"
-                                    SelectionMode="None">
-                        <CollectionView.ItemTemplate>
-                            <DataTemplate>
-                                <Label Text="{Binding .}"
-                                       FontFamily="Courier New"
-                                       FontSize="12"
-                                       Padding="4,3"
-                                       TextColor="{DynamicResource PrimaryTextColor}"/>
-                            </DataTemplate>
-                        </CollectionView.ItemTemplate>
-                    </CollectionView>
-
-                    <BoxView HeightRequest="1" Color="{DynamicResource BorderColor}"/>
-
-                    <!-- Pagination -->
-                    <HorizontalStackLayout Spacing="10" HorizontalOptions="Center">
-                        <Button Text="◀ Prev"
-                                Command="{Binding PrevPageCommand}"
-                                Padding="12,6" FontSize="12"
-                                IsEnabled="{Binding CurrentPage, Converter={StaticResource GreaterThanOneConverter}}"/>
-                        <Button Text="Next ▶"
-                                Command="{Binding NextPageCommand}"
-                                Padding="12,6" FontSize="12"/>
-                    </HorizontalStackLayout>
-
+                    <!-- Copy Button -->
+                    <Button Text="📋  Copy to Clipboard"
+                            Command="{Binding CopyOutputCommand}"
+                            HorizontalOptions="Fill"
+                            Padding="12,8"/>
+                    
                 </VerticalStackLayout>
             </Border>
 
