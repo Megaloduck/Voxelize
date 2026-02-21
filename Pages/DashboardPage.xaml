@@ -31,7 +31,7 @@
                                     Padding="0"
                                     StrokeThickness="0"
                                     StrokeShape="RoundRectangle 5">
-                                <Label Text="PS" 
+                                <Label Text="VX" 
                                        FontSize="18"    
                                        FontAttributes="Bold"
                                        TextColor="White"

@@ -1,17 +1,231 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:Voxelize.Pages.Tools"
              x:Class="Voxelize.Pages.Tools.DitheringPage"
-             Title="DitheringPage">
-    
+             BackgroundColor="{DynamicResource PageBackgroundColor}"
+             Title="Dithering">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <local:InverseBoolConverter x:Key="InverseBoolConverter"/>
+            <local:LockIconConverter    x:Key="LockIconConverter"/>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
     <ScrollView>
+        <VerticalStackLayout Padding="24" Spacing="16">
 
-        <VerticalStackLayout Padding="20" Spacing="10">
-            <Label Text="ITS DITHERING"/>
+            <!-- ── Header ─────────────────────────────────────────── -->
+            <Label Text="Dithering"
+                   FontSize="22" FontAttributes="Bold"
+                   TextColor="{DynamicResource PrimaryTextColor}"/>
+            <Label Text="Simulate gradients and depth using pixel patterns."
+                   FontSize="13" TextColor="{DynamicResource SecondaryTextColor}"/>
 
-          
+            <!-- ── Load ───────────────────────────────────────────── -->
+            <Button Text="📂  Load Image"
+                    Command="{Binding LoadImageCommand}"
+                    HorizontalOptions="Start"
+                    Padding="16,10"/>
+
+            <!-- ── Controls Card ──────────────────────────────────── -->
+            <Border StrokeShape="RoundRectangle 10"
+                    StrokeThickness="0"
+                    Background="{DynamicResource CardBackgroundColor}"
+                    Padding="16"
+                    IsEnabled="{Binding HasImage}">
+
+                <VerticalStackLayout Spacing="16">
+
+                    <!-- Grid Resolution -->
+                    <Label Text="Pixel Grid Resolution" FontAttributes="Bold"
+                           TextColor="{DynamicResource PrimaryTextColor}"/>
+
+                    <HorizontalStackLayout Spacing="8">
+                        <Button Text="16×16"   Command="{Binding SetPresetCommand}" CommandParameter="16"  Padding="10,6" FontSize="12"/>
+                        <Button Text="32×32"   Command="{Binding SetPresetCommand}" CommandParameter="32"  Padding="10,6" FontSize="12"/>
+                        <Button Text="64×64"   Command="{Binding SetPresetCommand}" CommandParameter="64"  Padding="10,6" FontSize="12"/>
+                        <Button Text="128×128" Command="{Binding SetPresetCommand}" CommandParameter="128" Padding="10,6" FontSize="12"/>
+                    </HorizontalStackLayout>
+
+                    <!-- W × H + Lock -->
+                    <HorizontalStackLayout Spacing="10" VerticalOptions="Center">
+                        <VerticalStackLayout Spacing="4">
+                            <Label Text="Width" FontSize="11"
+                                   TextColor="{DynamicResource SecondaryTextColor}"/>
+                            <Border StrokeShape="RoundRectangle 6" StrokeThickness="1"
+                                    Stroke="{DynamicResource BorderColor}"
+                                    Padding="4,0" WidthRequest="70">
+                                <Entry Text="{Binding CustomWidth}"
+                                       Keyboard="Numeric"
+                                       HorizontalTextAlignment="Center"/>
+                            </Border>
+                        </VerticalStackLayout>
+
+                        <VerticalStackLayout Spacing="4" VerticalOptions="End">
+                            <Label Text=" " FontSize="11"/>
+                            <Button Text="{Binding IsLocked, Converter={StaticResource LockIconConverter}}"
+                                    Command="{Binding ToggleLockCommand}"
+                                    Padding="8,6" FontSize="16"
+                                    BackgroundColor="Transparent"
+                                    TextColor="{DynamicResource PrimaryTextColor}"/>
+                        </VerticalStackLayout>
+
+                        <VerticalStackLayout Spacing="4">
+                            <Label Text="Height" FontSize="11"
+                                   TextColor="{DynamicResource SecondaryTextColor}"/>
+                            <Border StrokeShape="RoundRectangle 6" StrokeThickness="1"
+                                    Stroke="{DynamicResource BorderColor}"
+                                    Padding="4,0" WidthRequest="70">
+                                <Entry Text="{Binding CustomHeight}"
+                                       Keyboard="Numeric"
+                                       HorizontalTextAlignment="Center"
+                                       IsEnabled="{Binding IsLocked, Converter={StaticResource InverseBoolConverter}}"/>
+                            </Border>
+                        </VerticalStackLayout>
+
+                        <Label Text="px" VerticalOptions="End"
+                               Margin="0,0,0,8"
+                               TextColor="{DynamicResource SecondaryTextColor}"/>
+                    </HorizontalStackLayout>
+
+                    <BoxView HeightRequest="1" Color="{DynamicResource BorderColor}"/>
+
+                    <!-- Algorithm Picker -->
+                    <Label Text="Dither Algorithm" FontAttributes="Bold"
+                           TextColor="{DynamicResource PrimaryTextColor}"/>
+
+                    <Border StrokeShape="RoundRectangle 6" StrokeThickness="1"
+                            Stroke="{DynamicResource BorderColor}" Padding="4,0">
+                        <Picker ItemsSource="{Binding AlgorithmOptions}"
+                                SelectedItem="{Binding SelectedAlgorithm}"
+                                TextColor="{DynamicResource PrimaryTextColor}"/>
+                    </Border>
+
+                    <!-- Dither Strength -->
+                    <Label Text="Dither Strength" FontAttributes="Bold"
+                           TextColor="{DynamicResource PrimaryTextColor}"/>
+
+                    <Grid ColumnDefinitions="40,*,40">
+                        <Label Grid.Column="0" Text="0%"
+                               FontSize="11" HorizontalOptions="Center"
+                               TextColor="{DynamicResource SecondaryTextColor}"/>
+                        <Slider Grid.Column="1"
+                                Minimum="0" Maximum="1"
+                                Value="{Binding DitherStrength}"
+                                MinimumTrackColor="{DynamicResource Primary}"
+                                MaximumTrackColor="{DynamicResource BorderColor}"
+                                ThumbColor="{DynamicResource Primary}"/>
+                        <Label Grid.Column="2" Text="100%"
+                               FontSize="11" HorizontalOptions="Center"
+                               TextColor="{DynamicResource SecondaryTextColor}"/>
+                    </Grid>
+
+                    <BoxView HeightRequest="1" Color="{DynamicResource BorderColor}"/>
+
+                    <!-- Reduce Palette Toggle -->
+                    <HorizontalStackLayout Spacing="10" VerticalOptions="Center">
+                        <Switch IsToggled="{Binding ReducePalette}"
+                                OnColor="{DynamicResource Primary}"
+                                ThumbColor="White"
+                                Scale="0.85"
+                                VerticalOptions="Center"/>
+                        <Label Text="Reduce Color Palette First"
+                               FontAttributes="Bold"
+                               VerticalOptions="Center"
+                               TextColor="{DynamicResource PrimaryTextColor}"/>
+                    </HorizontalStackLayout>
+
+                    <!-- Palette Controls (only visible when toggled on) -->
+                    <VerticalStackLayout Spacing="10"
+                                         IsVisible="{Binding ReducePalette}">
+
+                        <!-- Bit Depth Readout -->
+                        <Border Background="{DynamicResource PageBackgroundColor}"
+                                StrokeShape="RoundRectangle 6"
+                                StrokeThickness="0"
+                                Padding="12,8">
+                            <HorizontalStackLayout Spacing="8" HorizontalOptions="Center">
+                                <Label Text="🎨" FontSize="18" VerticalOptions="Center"/>
+                                <Label Text="{Binding BitDepthLabel}"
+                                       FontSize="15" FontAttributes="Bold"
+                                       TextColor="{DynamicResource PrimaryTextColor}"
+                                       VerticalOptions="Center"/>
+                            </HorizontalStackLayout>
+                        </Border>
+
+                        <Grid ColumnDefinitions="30,*,30">
+                            <Label Grid.Column="0" Text="2"
+                                   FontSize="11" HorizontalOptions="Center"
+                                   TextColor="{DynamicResource SecondaryTextColor}"/>
+                            <Slider Grid.Column="1"
+                                    Minimum="2" Maximum="64"
+                                    Value="{Binding PosterizeLevels}"
+                                    MinimumTrackColor="{DynamicResource Primary}"
+                                    MaximumTrackColor="{DynamicResource BorderColor}"
+                                    ThumbColor="{DynamicResource Primary}"/>
+                            <Label Grid.Column="2" Text="64"
+                                   FontSize="11" HorizontalOptions="Center"
+                                   TextColor="{DynamicResource SecondaryTextColor}"/>
+                        </Grid>
+
+                    </VerticalStackLayout>
+
+                    <BoxView HeightRequest="1" Color="{DynamicResource BorderColor}"/>
+
+                    <!-- Actions -->
+                    <HorizontalStackLayout Spacing="10">
+                        <Button Text="▶  Apply"
+                                Command="{Binding ProcessImageCommand}"
+                                Padding="16,10"/>
+                        <Button Text="💾  Export"
+                                Command="{Binding ExportCommand}"
+                                Padding="16,10"/>
+                    </HorizontalStackLayout>
+
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- ── Status ─────────────────────────────────────────── -->
+            <Label Text="{Binding StatusText}"
+                   FontSize="12"
+                   TextColor="{DynamicResource SecondaryTextColor}"
+                   HorizontalOptions="Center"/>
+
+            <ActivityIndicator IsRunning="{Binding IsBusy}"
+                               IsVisible="{Binding IsBusy}"
+                               HorizontalOptions="Center"/>
+
+            <!-- ── Preview + Comparison ───────────────────────────── -->
+            <Grid IsVisible="{Binding HasImage}">
+                <Image Source="{Binding PreviewImage}"
+                       Aspect="AspectFit"
+                       HeightRequest="420">
+                    <Image.GestureRecognizers>
+                        <PointerGestureRecognizer
+                            PointerPressedCommand="{Binding CompareStartCommand}"
+                            PointerReleasedCommand="{Binding CompareEndCommand}"/>
+                    </Image.GestureRecognizers>
+                </Image>
+
+                <Border IsVisible="{Binding IsComparing}"
+                        Background="#CC000000"
+                        StrokeShape="RoundRectangle 6"
+                        StrokeThickness="0"
+                        Padding="10,5"
+                        HorizontalOptions="Center"
+                        VerticalOptions="Start"
+                        Margin="0,10">
+                    <Label Text="👁  Original" TextColor="White" FontSize="12"/>
+                </Border>
+            </Grid>
+
+            <Label Text="Press and hold the image to compare with the original."
+                   FontSize="11" HorizontalOptions="Center"
+                   TextColor="{DynamicResource TertiaryTextColor}"
+                   IsVisible="{Binding HasImage}"/>
 
         </VerticalStackLayout>
     </ScrollView>
-
 </ContentPage>
