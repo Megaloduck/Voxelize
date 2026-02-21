@@ -1,13 +1,202 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:Voxelize.Pages.Tools"
              x:Class="Voxelize.Pages.Tools.PosterizationPage"
-             Title="PosterizationPage">
-    <VerticalStackLayout>
-        <Label 
-            Text="Welcome to posterization"
-            VerticalOptions="Center" 
-            FontSize="40"
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+             BackgroundColor="{DynamicResource PageBackgroundColor}"
+             Title="Posterization">    
+    
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <local:InverseBoolConverter x:Key="InverseBoolConverter"/>
+            <local:LockIconConverter    x:Key="LockIconConverter"/>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <ScrollView>
+        <VerticalStackLayout Padding="24" Spacing="16">
+
+            <!-- ── Header ─────────────────────────────────────────── -->
+            <Label Text="Posterization"
+                   FontSize="22" FontAttributes="Bold"
+                   TextColor="{DynamicResource PrimaryTextColor}"/>
+            <Label Text="Reduce color depth to create a bold, graphic look."
+                   FontSize="13"
+                   TextColor="{DynamicResource SecondaryTextColor}"/>
+
+            <!-- ── Load ───────────────────────────────────────────── -->
+            <Button Text="📂  Load Image"
+                    Command="{Binding LoadImageCommand}"
+                    HorizontalOptions="Start"
+                    Padding="16,10"/>
+
+            <!-- ── Controls Card ──────────────────────────────────── -->
+            <Border StrokeShape="RoundRectangle 10"
+                    StrokeThickness="0"
+                    Background="{DynamicResource CardBackgroundColor}"
+                    Padding="16"
+                    IsEnabled="{Binding HasImage}">
+
+                <VerticalStackLayout Spacing="16">
+
+                    <!-- Grid Resolution -->
+                    <Label Text="Pixel Grid Resolution" FontAttributes="Bold"
+                           TextColor="{DynamicResource PrimaryTextColor}"/>
+
+                    <HorizontalStackLayout Spacing="8">
+                        <Button Text="16×16"  Command="{Binding SetPresetCommand}" CommandParameter="16"  Padding="10,6" FontSize="12"/>
+                        <Button Text="32×32"  Command="{Binding SetPresetCommand}" CommandParameter="32"  Padding="10,6" FontSize="12"/>
+                        <Button Text="64×64"  Command="{Binding SetPresetCommand}" CommandParameter="64"  Padding="10,6" FontSize="12"/>
+                        <Button Text="128×128" Command="{Binding SetPresetCommand}" CommandParameter="128" Padding="10,6" FontSize="12"/>
+                    </HorizontalStackLayout>
+
+                    <!-- W × H + Lock -->
+                    <HorizontalStackLayout Spacing="10" VerticalOptions="Center">
+                        <VerticalStackLayout Spacing="4">
+                            <Label Text="Width" FontSize="11"
+                                   TextColor="{DynamicResource SecondaryTextColor}"/>
+                            <Border StrokeShape="RoundRectangle 6" StrokeThickness="1"
+                                    Stroke="{DynamicResource BorderColor}"
+                                    Padding="4,0" WidthRequest="70">
+                                <Entry Text="{Binding CustomWidth}"
+                                       Keyboard="Numeric"
+                                       HorizontalTextAlignment="Center"/>
+                            </Border>
+                        </VerticalStackLayout>
+
+                        <VerticalStackLayout Spacing="4" VerticalOptions="End">
+                            <Label Text=" " FontSize="11"/>
+                            <Button Text="{Binding IsLocked, Converter={StaticResource LockIconConverter}}"
+                                    Command="{Binding ToggleLockCommand}"
+                                    Padding="8,6" FontSize="16"
+                                    BackgroundColor="Transparent"
+                                    TextColor="{DynamicResource PrimaryTextColor}"/>
+                        </VerticalStackLayout>
+
+                        <VerticalStackLayout Spacing="4">
+                            <Label Text="Height" FontSize="11"
+                                   TextColor="{DynamicResource SecondaryTextColor}"/>
+                            <Border StrokeShape="RoundRectangle 6" StrokeThickness="1"
+                                    Stroke="{DynamicResource BorderColor}"
+                                    Padding="4,0" WidthRequest="70">
+                                <Entry Text="{Binding CustomHeight}"
+                                       Keyboard="Numeric"
+                                       HorizontalTextAlignment="Center"
+                                       IsEnabled="{Binding IsLocked, Converter={StaticResource InverseBoolConverter}}"/>
+                            </Border>
+                        </VerticalStackLayout>
+
+                        <Label Text="px" VerticalOptions="End"
+                               Margin="0,0,0,8"
+                               TextColor="{DynamicResource SecondaryTextColor}"/>
+                    </HorizontalStackLayout>
+
+                    <BoxView HeightRequest="1" Color="{DynamicResource BorderColor}"/>
+
+                    <!-- Posterization Slider -->
+                    <Label Text="Color Depth" FontAttributes="Bold"
+                           TextColor="{DynamicResource PrimaryTextColor}"/>
+
+                    <!-- Live bit-depth readout -->
+                    <Border Background="{DynamicResource PageBackgroundColor}"
+                            StrokeShape="RoundRectangle 6"
+                            StrokeThickness="0"
+                            Padding="12,8">
+                        <HorizontalStackLayout Spacing="8" HorizontalOptions="Center">
+                            <Label Text="🎨" FontSize="18" VerticalOptions="Center"/>
+                            <Label Text="{Binding BitDepthLabel}"
+                                   FontSize="15" FontAttributes="Bold"
+                                   TextColor="{DynamicResource PrimaryTextColor}"
+                                   VerticalOptions="Center"/>
+                        </HorizontalStackLayout>
+                    </Border>
+
+                    <Grid ColumnDefinitions="30,*,30">
+                        <Label Grid.Column="0" Text="2"
+                               FontSize="11" HorizontalOptions="Center"
+                               TextColor="{DynamicResource SecondaryTextColor}"/>
+                        <Slider Grid.Column="1"
+                                x:Name="PosterizeSlider"
+                                Minimum="2" Maximum="64"
+                                Value="{Binding PosterizeLevels}"
+                                MinimumTrackColor="{DynamicResource Primary}"
+                                MaximumTrackColor="{DynamicResource BorderColor}"
+                                ThumbColor="{DynamicResource Primary}"/>
+                        <Label Grid.Column="2" Text="64"
+                               FontSize="11" HorizontalOptions="Center"
+                               TextColor="{DynamicResource SecondaryTextColor}"/>
+                    </Grid>
+
+                    <!-- Slider Snap Hints -->
+                    <HorizontalStackLayout HorizontalOptions="Center" Spacing="16">
+                        <Button Text="2"  Command="{Binding SetPresetCommand}" CommandParameter="levels:2"  Padding="8,4" FontSize="11"/>
+                        <Button Text="4"  Command="{Binding SetPresetCommand}" CommandParameter="levels:4"  Padding="8,4" FontSize="11"/>
+                        <Button Text="8"  Command="{Binding SetPresetCommand}" CommandParameter="levels:8"  Padding="8,4" FontSize="11"/>
+                        <Button Text="16" Command="{Binding SetPresetCommand}" CommandParameter="levels:16" Padding="8,4" FontSize="11"/>
+                        <Button Text="32" Command="{Binding SetPresetCommand}" CommandParameter="levels:32" Padding="8,4" FontSize="11"/>
+                        <Button Text="64" Command="{Binding SetPresetCommand}" CommandParameter="levels:64" Padding="8,4" FontSize="11"/>
+                    </HorizontalStackLayout>
+
+                    <BoxView HeightRequest="1" Color="{DynamicResource BorderColor}"/>
+
+                    <!-- Actions -->
+                    <HorizontalStackLayout Spacing="10">
+                        <Button Text="▶  Apply"
+                                Command="{Binding ProcessImageCommand}"
+                                Padding="16,10"/>
+                        <Button Text="💾  Export"
+                                Command="{Binding ExportCommand}"
+                                Padding="16,10"/>
+                    </HorizontalStackLayout>
+
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- ── Status ─────────────────────────────────────────── -->
+            <Label Text="{Binding StatusText}"
+                   FontSize="12"
+                   TextColor="{DynamicResource SecondaryTextColor}"
+                   HorizontalOptions="Center"/>
+
+            <ActivityIndicator IsRunning="{Binding IsBusy}"
+                               IsVisible="{Binding IsBusy}"
+                               HorizontalOptions="Center"/>
+
+            <!-- ── Preview + Comparison ───────────────────────────── -->
+            <Grid IsVisible="{Binding HasImage}">
+                <Image x:Name="PreviewImg"
+                       Source="{Binding PreviewImage}"
+                       Aspect="AspectFit"
+                       HeightRequest="420">
+                    <Image.GestureRecognizers>
+                        <!-- Tap and hold = show original -->
+                        <PointerGestureRecognizer
+                            PointerPressedCommand="{Binding CompareStartCommand}"
+                            PointerReleasedCommand="{Binding CompareEndCommand}"/>
+                    </Image.GestureRecognizers>
+                </Image>
+
+                <!-- Comparison Badge -->
+                <Border IsVisible="{Binding IsComparing}"
+                        Background="#CC000000"
+                        StrokeShape="RoundRectangle 6"
+                        StrokeThickness="0"
+                        Padding="10,5"
+                        HorizontalOptions="Center"
+                        VerticalOptions="Start"
+                        Margin="0,10">
+                    <Label Text="👁  Original"
+                           TextColor="White"
+                           FontSize="12"/>
+                </Border>
+            </Grid>
+
+            <!-- Comparison hint -->
+            <Label Text="Press and hold the image to compare with the original."
+                   FontSize="11" HorizontalOptions="Center"
+                   TextColor="{DynamicResource TertiaryTextColor}"
+                   IsVisible="{Binding HasImage}"/>
+
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>
