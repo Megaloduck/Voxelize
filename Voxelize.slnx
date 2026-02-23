@@ -1,3 +1,5 @@
 <Solution>
-  <Project Path="Voxelize.csproj" />
+  <Project Path="Voxelize.csproj">
+    <Deploy />
+  </Project>
 </Solution>
