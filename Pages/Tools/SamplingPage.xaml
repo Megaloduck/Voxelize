@@ -31,8 +31,8 @@
                 <!-- Load -->
                 <Button Text="📂  Load Image"
                         Command="{Binding LoadImageCommand}"
-                        HorizontalOptions="Start"
-                        Padding="16,10"/>
+                        HorizontalOptions="Start"                      
+                        BackgroundColor="{DynamicResource Primary}"/>
 
                 <!-- Controls Card -->
                 <Border StrokeShape="RoundRectangle 10"
@@ -47,10 +47,10 @@
 
                         <!-- Presets -->
                         <HorizontalStackLayout Spacing="8">
-                            <Button Text="16×16"   Command="{Binding SetPresetCommand}" CommandParameter="16"  Padding="10,6" FontSize="12"/>
-                            <Button Text="32×32"   Command="{Binding SetPresetCommand}" CommandParameter="32"  Padding="10,6" FontSize="12"/>
-                            <Button Text="64×64"   Command="{Binding SetPresetCommand}" CommandParameter="64"  Padding="10,6" FontSize="12"/>
-                            <Button Text="128×128" Command="{Binding SetPresetCommand}" CommandParameter="128" Padding="10,6" FontSize="12"/>
+                            <Button Text="16×16"   Command="{Binding SetPresetCommand}" CommandParameter="16"  Padding="10,6" FontSize="12" />
+                            <Button Text="32×32"   Command="{Binding SetPresetCommand}" CommandParameter="32"  Padding="10,6" FontSize="12" />
+                            <Button Text="64×64"   Command="{Binding SetPresetCommand}" CommandParameter="64"  Padding="10,6" FontSize="12" />
+                            <Button Text="128×128" Command="{Binding SetPresetCommand}" CommandParameter="128" Padding="10,6" FontSize="12" />
                         </HorizontalStackLayout>
 
                         <!-- W × H + Lock -->
@@ -88,6 +88,7 @@
                                 <Border StrokeShape="RoundRectangle 6"
                                         StrokeThickness="1"
                                         Stroke="{DynamicResource BorderColor}"
+                                        BackgroundColor="{DynamicResource CardBackgroundColor}"
                                         Padding="4,0" WidthRequest="70">
                                     <Entry Text="{Binding CustomHeight}"
                                            Keyboard="Numeric"

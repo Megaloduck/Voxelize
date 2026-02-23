@@ -58,10 +58,10 @@
 
                             <HorizontalStackLayout Spacing="8" VerticalOptions="Center" >
                                 <Label Text="👤" FontSize="14"/>
-                                <Label Text="Duck Species"                                       
+                                <Label Text="User"                                       
                                        FontSize="13"
                                        FontAttributes="Bold"
-                                       TextColor="{StaticResource Primary}"/>
+                                       TextColor="{StaticResource PrimaryColor}"/>
                             </HorizontalStackLayout>
                         </Border>
 
