@@ -6,7 +6,7 @@
     <!-- Background Colors -->
     <Color x:Key="PageBackgroundColor">#FAFAFB</Color>
     <Color x:Key="CardBackgroundColor">#FFFFFF</Color>
-    <Color x:Key="HeaderBackgroundColor">#e4e5f1</Color>
+    <Color x:Key="HeaderBackgroundColor">#E4E5F1</Color>
     <Color x:Key="SidebarBackgroundColor">#E1E1E1</Color>
 
     <!-- Text Colors -->
@@ -22,7 +22,7 @@
     <Color x:Key="SuccessColor">#16A34A</Color>
 
     <!-- Border Colors -->
-    <Color x:Key="BorderColor">#d2d3db</Color>
+    <Color x:Key="BorderColor">#D2D3DB</Color>
     <Color x:Key="DividerColor">#F1F3F5</Color>
 
     <!-- Button Colors -->
